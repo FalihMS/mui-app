@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AddNewStaff from '../Pages/Staff/AddNewStaff';
 import DetailStaff from '../Pages/Staff/DetailStaff';
 import AddNewWorkOrder from '../Pages/WorkOrder/AddNewWorkOrder';
+import AddNewProduk from '../Pages/Produk/AddNewProduk'
+import DetailProduk from '../Pages/Produk/DetailProduk'
 import SideBar from './Sidebar';
 
 function App() {
@@ -23,6 +25,12 @@ function App() {
             <Route path="/staff/:id" >
                 <DetailStaff/>
             </Route>   
+            <Route path="/produk/create">
+                <AddNewProduk/>
+            </Route>
+            <Route path="/produk/:id">
+                <DetailProduk/>
+            </Route>
            
             {
                 Sidebar.map(item =>{
