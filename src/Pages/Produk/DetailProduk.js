@@ -92,12 +92,12 @@ function InputForm(props){
 
   const [open, setOpen] = useState(false);
   const [inputData, setInputData] = useState({
-    id:props.staffData.id,
-    name:props.staffData.name,
-    email:props.staffData.email,
-    phone_no:props.staffData.phone_no,
-    address:props.staffData.address,
-    role_id:props.staffData.role_id
+    id:props.produkData.id,
+    name:props.produkData.name,
+    email:props.produkData.email,
+    phone_no:props.produkData.phone_no,
+    address:props.produkData.address,
+    role_id:props.produkData.role_id
   })
   const data = [
     {
@@ -117,7 +117,7 @@ function InputForm(props){
       value:"Owner"
     }
   ]
-  const [posisi, setPosisi] = useState([props.staffData.role_id, data[props.staffData.role_id].value])
+  const [posisi, setPosisi] = useState([props.produkData.role_id, data[props.produkData.role_id].value])
   const history = useHistory()
 
 
@@ -228,7 +228,7 @@ function DisplayDetail(props){
     )
   }
   
-function DetailStaff(props) {
+function DetailProduk(props) {
     let { id } = useParams();
 
     const [master, setMaster] = useState({})
@@ -243,9 +243,10 @@ function DetailStaff(props) {
 
     useEffect(()=>{
         axios
-        .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product")
+        .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product/"+id)
         .then((response) => {
             setMaster(response.data);
+            console.log(response)
         })
     },[])
 
@@ -261,4 +262,4 @@ function DetailStaff(props) {
     )
   }
   
-export default DetailStaff;
+export default DetailProduk;
