@@ -4,6 +4,8 @@ import DetailStaff from '../Pages/Staff/DetailStaff';
 import AddNewWorkOrder from '../Pages/WorkOrder/AddNewWorkOrder';
 import AddNewProduk from '../Pages/Produk/AddNewProduk'
 import DetailProduk from '../Pages/Produk/DetailProduk'
+import DetailMekanik from '../Pages/Mekanik/DetailMekanik'
+import AddNewMekanik from '../Pages/Mekanik/AddNewMekanik'
 import SideBar from './Sidebar';
 
 function App() {
@@ -18,7 +20,6 @@ function App() {
             <Route path="/staff/:id" >
                 <DetailStaff/>
             </Route>   
-
             <Route path="/work-order/create">
                 <AddNewWorkOrder/>
             </Route>
@@ -30,6 +31,12 @@ function App() {
             </Route>
             <Route path="/produk/:id">
                 <DetailProduk/>
+            </Route>
+            <Route path="/mekanik/create">
+                <AddNewMekanik/>
+            </Route>
+            <Route path="/mekanik/:id">
+                <DetailMekanik/>
             </Route>
            
             {
