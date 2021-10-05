@@ -2,6 +2,7 @@ import ListStaffPage from "../Pages/Staff/ListStaffPage";
 import ListWorkOrderPage from "../Pages/WorkOrder/ListWorkOrderPage";
 import ListProduk from "../Pages/Produk/ListProdukPage";
 import ListMekanik from "../Pages/Mekanik/ListMekanikPage";
+import ListService from "../Pages/Servis/ListServisPage";
 
 
 const SideBar = [
@@ -28,6 +29,12 @@ const SideBar = [
         text:"Mekanik",
         link:"/mekanik",
         page: ListMekanik
+    },
+    {
+        icon:"assignment",
+        text:"Service",
+        link:"/service",
+        page: ListService
     },
     
 ]

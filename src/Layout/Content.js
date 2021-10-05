@@ -6,6 +6,8 @@ import AddNewProduk from '../Pages/Produk/AddNewProduk'
 import DetailProduk from '../Pages/Produk/DetailProduk'
 import DetailMekanik from '../Pages/Mekanik/DetailMekanik'
 import AddNewMekanik from '../Pages/Mekanik/AddNewMekanik'
+import AddNewService from '../Pages/Servis/AddNewServis'
+import DetailService from '../Pages/Servis/DetailServis'
 import SideBar from './Sidebar';
 
 function App() {
@@ -37,6 +39,12 @@ function App() {
             </Route>
             <Route path="/mekanik/:id">
                 <DetailMekanik/>
+            </Route>
+            <Route path="/service/create">
+                <AddNewService/>
+            </Route>
+            <Route path="/service/:id">
+                <DetailService/>
             </Route>
            
             {
