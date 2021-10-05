@@ -99,6 +99,7 @@ function InputForm(props){
     address:props.mekanikData.address,
     role_id:props.mekanikData.role_id
   })
+  const [updateState, setUpdateState] = useState(0)
   const data = [
     {
       key:"1",
@@ -117,7 +118,7 @@ function InputForm(props){
       value:"Owner"
     }
   ]
-  const [posisi, setPosisi] = useState([props.mekanikData.role_id, data[props.mekanikData.role_id].value])
+  // const [posisi, setPosisi] = useState([props.mekanikData.role_id, data[props.mekanikData.role_id].value]) //UPDATE DISINI YANG DI COMMENT
   const history = useHistory()
 
 
@@ -134,27 +135,26 @@ function InputForm(props){
 
   async function onSubmit(event){
     event.preventDefault()
-    await fetch('http://localhost:8000/staff/'+ inputData.id, {
-      method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({data:inputData})
-    }).then(res =>{
-      if(res.status == 200){
-        history.push({ 
-          pathname: '/staff',
-          state: "Success"
-         })
+  
+    axios.put(`http://localhost:8000/service/mechanic/${inputData.id}`,{
+      name: inputData.name,
+      email: inputData.email,
+      phone_no: inputData.phone_no,
+      address: inputData.address,
+      join_date: Date.now()
+    }).then(res => {
+      if(res.status === 201){
+        history.push({
+          pathname: '/mekanik',
+          state: 'Success'
+        })
       }else{
-        history.push({ 
-          pathname: '/staff',
-          state: "Failed"
-         })  
+        history.push({
+          pathname: '/mekanik',
+          state: 'Failed'
+        })
       }
     })
-    
   }
 
   return(
@@ -173,14 +173,8 @@ function InputForm(props){
         <TextField onChange={(event)=>{setInputData({...inputData, address: event.target.value}); event.preventDefault()}} value={inputData.address} label="Alamat Rumah" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, role_id: event.target.value}); event.preventDefault()}} value={inputData.role_id}  label="Posisi" variant="outlined" value={posisi === '' ? "Pilih Melalui Tombol" : posisi[0]} size="small" style={{display:'none'}}/>        
-        <TextField readOnly label="Posisi" variant="outlined" value={posisi.length === 0 ? "Pilih Melalui Tombol" : posisi[1]} size="small" style={{width:450}}/>
-        <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Pilih Posisi</Button>
-      </Box>
-      <Box display="flex" style={{marginBlock:10}}>
         <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
-      <ModalForm dataset={data} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item], setInputData({...inputData, role_id: key}))}}/>
     </Grid>
   )
 }
