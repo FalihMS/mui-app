@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Search } from "@material-ui/icons";
 import { useState } from "react";
 import { useHistory } from "react-router";
-import axios from 'axios'
+import axios from 'axios';
+import uniqid from 'uniqid'
 
 const useStyles = makeStyles((theme)=>({
   modal: {
@@ -93,9 +94,9 @@ function InputForm(){
   const [open, setOpen] = useState(false);
   const [inputData, setInputData] = useState({
     name:'',
-    unit_measurement:'',
-    category:'',
-    role_id:''
+    description:'',
+    flat_rate:'',
+    // role_id:''
   })
   const [posisi, setPosisi] = useState([])
   const history = useHistory()
@@ -132,42 +133,23 @@ function InputForm(){
   
   async function onSubmit(event){
     event.preventDefault()
-    // await fetch('http://localhost:8000/staff', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({data:inputData})
-    // }).then(res =>{
-    //   if(res.status === 201){
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Success"
-    //      })
-    //   }else{
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Failed"
-    //      })  
-    //   }
-    // })
-
-    axios
-    .post("",{data:inputData})
-    .then(response => {
-        if(response.status === 201){
-            history.push({
-                pathname: '/service',
-                state: "Success"
-            })
-        }
-    }).catch(error =>{
+    axios.post('http://localhost:8000/service',{
+      id: uniqid("service-"),
+      name: inputData.name,
+      description: inputData.description,
+      flat_rate: inputData.flat_rate
+    }).then(res => {
+      if(res.status === 201){
         history.push({
-            pathname: '/service',
-            state: "Failed"
+          pathname: '/service',
+          state: "Success"
         })
-        console.error('Something went wrong', error);
+      }else{
+        history.push({
+          pathname: '/service',
+          state: "Failed"
+        })
+      }
     })
     
   }
@@ -179,15 +161,14 @@ function InputForm(){
         <TextField onChange={(event)=>{setInputData({...inputData, name: event.target.value}); event.preventDefault()}} value={inputData.name} label="Nama Service" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, unit_measurement: event.target.value}); event.preventDefault()}} value={inputData.unit_measurement} label="Description" variant="outlined" size="small" style={{width:450}}/>
+        <TextField onChange={(event)=>{setInputData({...inputData, description: event.target.value}); event.preventDefault()}} value={inputData.description} label="Description" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, category: event.target.value}); event.preventDefault()}} value={inputData.category} label="Flat Rate" variant="outlined" size="small" style={{width:450}}/>
+        <TextField onChange={(event)=>{setInputData({...inputData, flat_rate: event.target.value}); event.preventDefault()}} value={inputData.flat_rate} label="Flat Rate" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
-      <ModalForm dataset={data} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item], setInputData({...inputData, role_id: key}))}}/>
     </Grid>
   )
 }

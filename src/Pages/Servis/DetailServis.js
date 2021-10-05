@@ -211,16 +211,16 @@ function DisplayDetail(props){
       <Grid container direction="row" component={Paper} className={classes.boxInput}>
         
         <Grid>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>ID Service:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nama Service:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Description:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Flat Rate:</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>ID Service</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nama Service</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Description</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Flat Rate</Typography>
         </Grid>
         <Grid>
             <Typography style={{marginBottom:20, fontWeight:'bold'}}>: {service.id}</Typography>
             <Typography style={{marginBottom:20}}>: {service.name}</Typography>      
-            <Typography style={{marginBottom:20}}>: {service.unit_measurement}</Typography>    
-            <Typography style={{marginBottom:20}}>: {service.category}</Typography>     
+            <Typography style={{marginBottom:20}}>: {service.description}</Typography>    
+            <Typography style={{marginBottom:20}}>: {service.flat_rate}</Typography>     
         </Grid>
       </Grid>
     )
@@ -241,7 +241,7 @@ function DetailServis(props) {
 
     useEffect(()=>{
         axios
-        .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product/"+id)
+        .get(`http://localhost:8000/service/${id}`)
         .then((response) => {
             setMaster(response.data);
             console.log(response)
