@@ -22,72 +22,6 @@ const useStyles = makeStyles((theme)=>({
   }
 }));
 
-function ModalForm(props){
-  const classes = useStyles()
-  
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [selectedItem, setSelectedItem] = useState('');
-  const data = props.dataset
-
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-    setSelectedItem(data[index].value)
-  };
-
-  function exitModal(){
-    props.changeInput(data[selectedIndex].key, data[selectedIndex].value)
-    props.handleClose()
-  }
-
-  return(
-    <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      className={classes.modal}
-      open={props.openState}
-      onClose={props.handleClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
-    >
-    <Fade in={props.openState}>
-      <div className={classes.paper}>
-      <Typography variant="h5" color="primary" style={{marginBlock:20}}>Pilih Posisi</Typography>
-      <Typography style={{marginBlock:20}}>Posisi Dipilih: {selectedItem === '' ? '': selectedItem }</Typography>
-        <TextField
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
-          label="Cari Posisi"
-          variant="outlined" 
-          size="small" 
-          style={{width:450, marginBlock:10}}/>
-        <List style={{border:"1px solid grey", marginBottom:10,position: 'relative',overflow: 'auto',height: 300,}}>
-          {data.map((item, key) => (
-              <ListItem
-              button
-              selected={selectedIndex === key}
-              onClick={(event) => handleListItemClick(event, key)}
-            >
-              <ListItemText primary={item.value}/>
-            </ListItem>
-            ))}
-          
-          
-        </List>
-        <Button onClick={exitModal} variant="contained" style={{margin:"auto"}} color="primary">Pilih Posisi</Button>
-      </div>
-    </Fade>
-  </Modal>    
-  )
-}
-
 function InputForm(props){
 
   const [open, setOpen] = useState(false);
@@ -100,36 +34,7 @@ function InputForm(props){
     role_id:props.mekanikData.role_id
   })
   const [updateState, setUpdateState] = useState(0)
-  const data = [
-    {
-      key:"1",
-      value:"Kasir"
-    },
-    {
-      key:"2",
-      value:"Mekanik"
-    },
-    {
-      key:"3",
-      value:"Admin Gudang"
-    },
-    {
-      key:"4",
-      value:"Owner"
-    }
-  ]
-  // const [posisi, setPosisi] = useState([props.mekanikData.role_id, data[props.mekanikData.role_id].value]) //UPDATE DISINI YANG DI COMMENT
   const history = useHistory()
-
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const classes = useStyles()
 
 
@@ -182,35 +87,16 @@ function InputForm(props){
 function DisplayDetail(props){
     const classes = useStyles()
     const produk = props.mekanikData
-    const data = [
-      {
-        key:"1",
-        value:"Kasir"
-      },
-      {
-        key:"2",
-        value:"Mekanik"
-      },
-      {
-        key:"3",
-        value:"Admin Gudang"
-      },
-      {
-        key:"4",
-        value:"Owner"
-      }
-    ]
-    
     return(
       <Grid container direction="row" component={Paper} className={classes.boxInput}>
         
         <Grid>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>ID Mekanik:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nama Mekanik:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nomor Telepon:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Email:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Alamat:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Joined Date:</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>ID Mekanik</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nama Mekanik</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nomor Telepon</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Email</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Alamat</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Joined Date</Typography>
         </Grid>
         <Grid>
             <Typography style={{marginBottom:20, fontWeight:'bold'}}>: {produk.id}</Typography>
