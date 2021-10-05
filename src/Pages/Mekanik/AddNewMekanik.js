@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Search } from "@material-ui/icons";
 import { useState } from "react";
 import { useHistory } from "react-router";
-import axios from 'axios'
+import axios from 'axios';
+import uniqid from 'uniqid';
 
 const useStyles = makeStyles((theme)=>({
   modal: {
@@ -93,9 +94,9 @@ function InputForm(){
   const [open, setOpen] = useState(false);
   const [inputData, setInputData] = useState({
     name:'',
-    unit_measurement:'',
-    category:'',
-    role_id:''
+    phone_no:'',
+    email:'',
+    address:'',
   })
   const [posisi, setPosisi] = useState([])
   const history = useHistory()
@@ -132,42 +133,24 @@ function InputForm(){
   
   async function onSubmit(event){
     event.preventDefault()
-    // await fetch('http://localhost:8000/staff', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({data:inputData})
-    // }).then(res =>{
-    //   if(res.status === 201){
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Success"
-    //      })
-    //   }else{
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Failed"
-    //      })  
-    //   }
-    // })
-
-    axios
-    .post("",{data:inputData})
-    .then(response => {
-        if(response.status === 201){
-            history.push({
-                pathname: '/produk',
-                state: "Success"
-            })
-        }
-    }).catch(error =>{
+    axios.post('http://localhost:8000/service/mechanic',{
+      id: uniqid("mechanic-"),
+      name: inputData.name,
+      phone_no: inputData.phone_no,
+      email: inputData.email,
+      address: inputData.address
+    }).then(res => {
+      if(res.status === 201){
         history.push({
-            pathname: '/produk',
-            state: "Failed"
+          pathname: '/mekanik',
+          state: "Success"
         })
-        console.error('Something went wrong', error);
+      }else{
+        history.push({
+          pathname: '/mekanik',
+          state: "Failed"
+        })
+      }
     })
     
   }

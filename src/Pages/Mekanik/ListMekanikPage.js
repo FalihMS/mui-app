@@ -48,7 +48,7 @@ function CustomizedTables() {
   const classes = useStyles();
   useEffect(()=>{
     axios
-    .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product")
+    .get("http://localhost:8000/service/mechanic")
     .then((response) => {
         setRows(response.data);
     })
@@ -71,10 +71,10 @@ function CustomizedTables() {
               <StyledTableCell component="th" scope="row">
                 {row.name}
               </StyledTableCell>
-              <StyledTableCell align="right">{row.unit_measurement}</StyledTableCell>
-              <StyledTableCell align="right">{row.category}</StyledTableCell>
-              <StyledTableCell align="right">{row.warehouse_location}</StyledTableCell>
-              <StyledTableCell align="right">{row.warehouse_location}</StyledTableCell>
+              <StyledTableCell align="right">{row.phone_no}</StyledTableCell>
+              <StyledTableCell align="right">{row.email}</StyledTableCell>
+              <StyledTableCell align="right">{row.address}</StyledTableCell>
+              <StyledTableCell align="right">{row.join_date}</StyledTableCell>
               <StyledTableCell align="right">
                 <Button component="a" href={"/mekanik/"+ row.id} variant="outlined" color="primary">Lihat Detail</Button>
               </StyledTableCell>

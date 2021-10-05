@@ -221,8 +221,10 @@ function DisplayDetail(props){
         <Grid>
             <Typography style={{marginBottom:20, fontWeight:'bold'}}>: {produk.id}</Typography>
             <Typography style={{marginBottom:20}}>: {produk.name}</Typography>      
-            <Typography style={{marginBottom:20}}>: {produk.unit_measurement}</Typography>    
-            <Typography style={{marginBottom:20}}>: {produk.category}</Typography>     
+            <Typography style={{marginBottom:20}}>: {produk.phone_no}</Typography>    
+            <Typography style={{marginBottom:20}}>: {produk.email}</Typography>     
+            <Typography style={{marginBottom:20}}>: {produk.address}</Typography>     
+            <Typography style={{marginBottom:20}}>: {produk.join_date}</Typography>          
             {/* <Typography style={{marginBottom:20}}>: {staff.address}</Typography>   */}
         </Grid>
       </Grid>
@@ -244,7 +246,7 @@ function DetailMekanik(props) {
 
     useEffect(()=>{
         axios
-        .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product/"+id)
+        .get(`http://localhost:8000/service/mechanic/${id}`)
         .then((response) => {
             setMaster(response.data);
             console.log(response)
