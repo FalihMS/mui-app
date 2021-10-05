@@ -23,72 +23,6 @@ const useStyles = makeStyles((theme)=>({
   }
 }));
 
-function ModalForm(props){
-  const classes = useStyles()
-  
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [selectedItem, setSelectedItem] = useState('');
-  const data = props.dataset
-
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-    setSelectedItem(data[index].value)
-  };
-
-  function exitModal(){
-    props.changeInput(data[selectedIndex].key, data[selectedIndex].value)
-    props.handleClose()
-  }
-
-  return(
-    <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      className={classes.modal}
-      open={props.openState}
-      onClose={props.handleClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
-    >
-    <Fade in={props.openState}>
-      <div className={classes.paper}>
-      <Typography variant="h5" color="primary" style={{marginBlock:20}}>Pilih Lokasi Barang</Typography>
-      <Typography style={{marginBlock:20}}>Lokasi Barang Dipilih: {selectedItem === '' ? '': selectedItem }</Typography>
-        <TextField
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
-          label="Cari Lokasi Barang"
-          variant="outlined" 
-          size="small" 
-          style={{width:450, marginBlock:10}}/>
-        <List style={{border:"1px solid grey", marginBottom:10,position: 'relative',overflow: 'auto',height: 300,}}>
-          {data.map((item, key) => (
-              <ListItem
-              button
-              selected={selectedIndex === key}
-              onClick={(event) => handleListItemClick(event, key)}
-            >
-              <ListItemText primary={item.value}/>
-            </ListItem>
-            ))}
-          
-          
-        </List>
-        <Button onClick={exitModal} variant="contained" style={{margin:"auto"}} color="primary">Pilih Lokasi Barang</Button>
-      </div>
-    </Fade>
-  </Modal>    
-  )
-}
-
 function InputForm(){
 
   const [open, setOpen] = useState(false);
@@ -98,61 +32,11 @@ function InputForm(){
     category:'',
     recommendation_price:'',
   })
-  const [posisi, setPosisi] = useState([])
   const history = useHistory()
-  const data = [
-    {
-      key:"1",
-      value:"A1"
-    },
-    {
-      key:"2",
-      value:"B1"
-    },
-    {
-      key:"3",
-      value:"C2"
-    },
-    {
-      key:"4",
-      value:"C5"
-    }
-  ]
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const classes = useStyles()
-
-
   
   async function onSubmit(event){
     event.preventDefault()
-    // await fetch('http://localhost:8000/staff', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({data:inputData})
-    // }).then(res =>{
-    //   if(res.status === 201){
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Success"
-    //      })
-    //   }else{
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Failed"
-    //      })  
-    //   }
-    // })
 
     axios.post('http://localhost:8000/product',{
       id: uniqid("PR-"),
