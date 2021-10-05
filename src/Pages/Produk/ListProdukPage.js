@@ -26,19 +26,25 @@ const StyledTableRow = withStyles((theme) => ({
 
 const useStyles = makeStyles((theme)=>({
   buttonList:{
-    marginBlock:theme.spacing(3)
+    marginBlock:theme.spacing(3),
+    display: "flex",
   },
   table: {
     minWidth: 700,
   },
+  button:{
+    marginRight: 10
+  }
 }));
 
 function ButtonList(){
   const classes = useStyles()
 
   return(
-    <Box className={classes.buttonList}>
-      <Button component="a" href="/produk/create" variant="contained" color="primary">Tambah Produk</Button>
+    <Box className={classes.buttonList} mx="auto">
+      <Button className={classes.button} component="a" href="/produk/create" variant="contained" color="primary">Tambah Produk</Button>
+      <Button className={classes.button} component="a" href="/produk/create" variant="contained" color="primary">Barang Masuk</Button>
+      <Button className={classes.button} component="a" href="/produk/create" variant="contained" color="primary">Barang Keluar</Button>
     </Box>
   )
 }
@@ -48,7 +54,7 @@ function CustomizedTables() {
   const classes = useStyles();
   useEffect(()=>{
     axios
-    .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product")
+    .get("http://localhost:8000/product")
     .then((response) => {
         setRows(response.data);
     })
@@ -73,7 +79,7 @@ function CustomizedTables() {
               </StyledTableCell>
               <StyledTableCell align="right">{row.unit_measurement}</StyledTableCell>
               <StyledTableCell align="right">{row.category}</StyledTableCell>
-              <StyledTableCell align="right">{row.warehouse_location}</StyledTableCell>
+              <StyledTableCell align="right">{row.storage_location}</StyledTableCell>
               <StyledTableCell align="right">
                 <Button component="a" href={"/produk/"+ row.id} variant="outlined" color="primary">Lihat Detail</Button>
               </StyledTableCell>

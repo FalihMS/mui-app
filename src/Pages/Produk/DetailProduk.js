@@ -134,7 +134,7 @@ function InputForm(props){
 
   async function onSubmit(event){
     event.preventDefault()
-    await fetch('http://localhost:8000/staff/'+ inputData.id, {
+    await fetch(`http://localhost:8000/product/${inputData.id}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -159,7 +159,7 @@ function InputForm(props){
 
   return(
     <Grid container direction="column" component={Paper} className={classes.boxInput}>
-      <Typography variant="h5" color="primary" style={{marginBottom:20}}>Update Karyawan</Typography>
+      <Typography variant="h5" color="primary" style={{marginBottom:20}}>Update Produk</Typography>
       <Box display="flex" style={{marginBlock:10}}>
         <TextField onChange={(event)=>{setInputData({...inputData, name: event.target.value}); event.preventDefault()}} value={inputData.name} label="Nama Karyawan" variant="outlined" size="small" style={{width:450}}/>
       </Box>
@@ -211,17 +211,19 @@ function DisplayDetail(props){
       <Grid container direction="row" component={Paper} className={classes.boxInput}>
         
         <Grid>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>ID Karyawan:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nama Karyawan:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nomor HP:</Typography>
-            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Email:</Typography>
-            {/* <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Alamat:</Typography> */}
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>ID Barang</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Nama Barang</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Satuan Ukuran</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Kategori</Typography>
+            <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Harga Rekomendasi</Typography>
+            {/* <Typography color="primary" style={{marginBottom:20, marginRight:20}}>Alamat</Typography> */}
         </Grid>
         <Grid>
             <Typography style={{marginBottom:20, fontWeight:'bold'}}>: {produk.id}</Typography>
             <Typography style={{marginBottom:20}}>: {produk.name}</Typography>      
             <Typography style={{marginBottom:20}}>: {produk.unit_measurement}</Typography>    
             <Typography style={{marginBottom:20}}>: {produk.category}</Typography>     
+            <Typography style={{marginBottom:20}}>: {produk.recommendation_price}</Typography>     
             {/* <Typography style={{marginBottom:20}}>: {staff.address}</Typography>   */}
         </Grid>
       </Grid>
@@ -243,7 +245,7 @@ function DetailProduk(props) {
 
     useEffect(()=>{
         axios
-        .get("https://61497f34035b3600175ba2ed.mockapi.io/api/v1/Product/"+id)
+        .get(`http://localhost:8000/product/${id}`)
         .then((response) => {
             setMaster(response.data);
             console.log(response)

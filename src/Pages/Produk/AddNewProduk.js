@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Search } from "@material-ui/icons";
 import { useState } from "react";
 import { useHistory } from "react-router";
-import axios from 'axios'
+import axios from 'axios';
+import uniqid from 'uniqid';
 
 const useStyles = makeStyles((theme)=>({
   modal: {
@@ -95,7 +96,7 @@ function InputForm(){
     name:'',
     unit_measurement:'',
     category:'',
-    role_id:''
+    recommendation_price:'',
   })
   const [posisi, setPosisi] = useState([])
   const history = useHistory()
@@ -153,21 +154,24 @@ function InputForm(){
     //   }
     // })
 
-    axios
-    .post("",{data:inputData})
-    .then(response => {
-        if(response.status === 201){
-            history.push({
-                pathname: '/produk',
-                state: "Success"
-            })
-        }
-    }).catch(error =>{
+    axios.post('http://localhost:8000/product',{
+      id: uniqid("PR-"),
+      name: inputData.name,
+      unit_measurement: inputData.unit_measurement,
+      category: inputData.category,
+      recommendation_price: inputData.recommendation_price
+    }).then(res => {
+      if(res.status === 201){
         history.push({
-            pathname: '/produk',
-            state: "Failed"
+          pathname: '/product',
+          state: "Success"
         })
-        console.error('Something went wrong', error);
+      }else{
+        history.push({
+          pathname: '/product',
+          state: "Failed"
+        })
+      }
     })
     
   }
@@ -185,16 +189,11 @@ function InputForm(){
         <TextField onChange={(event)=>{setInputData({...inputData, category: event.target.value}); event.preventDefault()}} value={inputData.category} label="Kategori Barang" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        
-        <TextField readOnly label="Lokasi Barang" variant="outlined" value={posisi.length === 0 ? "Pilih Melalui Tombol" : posisi[1]} size="small" style={{width:450}}/>
-
-        <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Pilih Lokasi Barang</Button>
-      
+        <TextField onChange={(event)=>{setInputData({...inputData, recommendation_price: event.target.value}); event.preventDefault()}} value={inputData.recommendation_price} label="Rekomendasi Harga" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
-      <ModalForm dataset={data} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item], setInputData({...inputData, role_id: key}))}}/>
     </Grid>
   )
 }
