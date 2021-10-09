@@ -8,6 +8,8 @@ import DetailMekanik from '../Pages/Mekanik/DetailMekanik'
 import AddNewMekanik from '../Pages/Mekanik/AddNewMekanik'
 import AddNewService from '../Pages/Servis/AddNewServis'
 import DetailService from '../Pages/Servis/DetailServis'
+import PrinterPKB from '../Pages/Printer/PrinterPKB';
+
 import SideBar from './Sidebar';
 
 function App() {
@@ -45,6 +47,9 @@ function App() {
             </Route>
             <Route path="/service/:id">
                 <DetailService/>
+            </Route>
+            <Route path="/printer/pkb/:id">
+                <PrinterPKB/>
             </Route>
            
             {
