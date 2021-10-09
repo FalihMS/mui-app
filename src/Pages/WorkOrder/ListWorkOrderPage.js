@@ -46,7 +46,7 @@ function CustomizedTables() {
   const [rows, setRows] = useState([])
   const classes = useStyles();
   useEffect(()=>{
-    fetch("http://localhost:8000/staff")
+    fetch("http://localhost:8000/order")
     .then(res =>res.json())
     .then(
       (result)=>{
@@ -60,9 +60,9 @@ function CustomizedTables() {
         <TableHead>
           <TableRow>
             <StyledTableCell>Nama</StyledTableCell>
-            <StyledTableCell align="right">Nomor HP</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right">Alamat</StyledTableCell>
+            <StyledTableCell align="right">Plat Nomor</StyledTableCell>
+            <StyledTableCell align="right">Tipe Kendaraan</StyledTableCell>
+            <StyledTableCell align="right">Odometer</StyledTableCell>
             <StyledTableCell align="right">Aksi</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -72,11 +72,12 @@ function CustomizedTables() {
               <StyledTableCell component="th" scope="row">
                 {row.name}
               </StyledTableCell>
-              <StyledTableCell align="right">{row.phone_no}</StyledTableCell>
-              <StyledTableCell align="right">{row.email}</StyledTableCell>
-              <StyledTableCell align="right">{row.address}</StyledTableCell>
+              <StyledTableCell align="right">{row.plate_number}</StyledTableCell>
+              <StyledTableCell align="right">{row.type}</StyledTableCell>
+              <StyledTableCell align="right">{row.odometer}</StyledTableCell>
               <StyledTableCell align="right">
-                <Button component="a" href={"/staff/"+ row.id} variant="outlined" color="primary">Lihat Detail</Button>
+                <Button component="a" href={"/printer/pkb/"+ row.id} style={{marginRight:10}} variant="contained" color="primary">Cetak PKB</Button>
+                <Button component="a" href={"/printer/pkb/"+ row.id} variant="contained" color="primary">Cetak Bukti Bayar</Button>
               </StyledTableCell>
             </StyledTableRow>
           ))}

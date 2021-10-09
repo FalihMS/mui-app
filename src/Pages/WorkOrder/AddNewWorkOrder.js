@@ -97,7 +97,7 @@ function InputNopolForm(){
 
   useEffect(()=>{
     const data = []
-    fetch("http://localhost:8000/vehicle")
+    fetch("http://localhost:8000/customer/vehicle")
     .then(res =>res.json())
     .then(
       (result)=>{
@@ -128,7 +128,7 @@ function InputNopolForm(){
         <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Cari Nomor Polisi</Button>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField readOnly label="Model Kendaraan" variant="outlined" value={posisi.length === 0 ? "Pilih Nomor Polisi" : selectedRow.vehicle_model.brand + ' ' + selectedRow.vehicle_model.type } size="small" style={{width:450}}/>
+        <TextField readOnly label="Model Kendaraan" variant="outlined" value={posisi.length === 0 ? "Pilih Nomor Polisi" : selectedRow.vehicle_model } size="small" style={{width:450}}/>
       </Box>
       <ModalForm dataset={row} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item]); setSelectedRow(row[key]) }} />
     </Grid>
