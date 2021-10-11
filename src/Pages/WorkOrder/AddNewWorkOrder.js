@@ -1,8 +1,10 @@
 import { Typography, Box, Paper, Grid, Button, Modal, Fade, Backdrop, TextField, List, ListItem, ListItemText, InputAdornment  } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { Search } from "@material-ui/icons";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
+import uniqid from 'uniqid'
 
 const useStyles = makeStyles((theme)=>({
   modal: {
@@ -87,6 +89,138 @@ function ModalForm(props){
   )
 }
 
+function ModalPelanggan(props){
+  const classes = useStyles()
+  
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [selectedItem, setSelectedItem] = useState('');
+  const data = props.dataset
+
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index);
+    setSelectedItem(data[index].value)
+  };
+
+  function exitModal(){
+    props.changeInput(data[selectedIndex].key, data[selectedIndex].value)
+    props.handleClose()
+  }
+
+  return(
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      className={classes.modal}
+      open={props.openState}
+      onClose={props.handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+    <Fade in={props.openState}>
+      <div className={classes.paper}>
+      <Typography variant="h5" color="primary" style={{marginBlock:20}}>Pilih Nomor Handphone</Typography>
+      <Typography style={{marginBlock:20}}>Nomor Handphone Dipilih: {selectedItem === '' ? '': selectedItem }</Typography>
+        <TextField
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+          label="Cari Posisi"
+          variant="outlined" 
+          size="small" 
+          style={{width:450, marginBlock:10}}/>
+        <List style={{border:"1px solid grey", marginBottom:10,position: 'relative',overflow: 'auto',height: 300,}}>
+          {data.map((item, key) => (
+              <ListItem
+              button
+              selected={selectedIndex === key}
+              onClick={(event) => handleListItemClick(event, key)}
+            >
+              <ListItemText primary={item.value}/>
+            </ListItem>
+            ))}
+          
+          
+        </List>
+        <Button onClick={exitModal} variant="contained" style={{margin:"auto"}} color="primary">Pilih Posisi</Button>
+      </div>
+    </Fade>
+  </Modal>    
+  )
+}
+
+function ModalKendaraan(props){
+  const classes = useStyles()
+  
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [selectedItem, setSelectedItem] = useState('');
+  const dataKendaraan = props.dataset
+
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index);
+    setSelectedItem(dataKendaraan[index].value)
+  };
+
+  function exitModal(){
+    props.changeInput(dataKendaraan[selectedIndex].key, dataKendaraan[selectedIndex].value)
+    props.handleClose()
+  }
+
+  return(
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      className={classes.modal}
+      open={props.openState}
+      onClose={props.handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+    <Fade in={props.openState}>
+      <div className={classes.paper}>
+      <Typography variant="h5" color="primary" style={{marginBlock:20}}>Pilih Model Kendaraan</Typography>
+      <Typography style={{marginBlock:20}}>Model Kendaraan Dipilih: {selectedItem === '' ? '': selectedItem }</Typography>
+        <TextField
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+          label="Cari Posisi"
+          variant="outlined" 
+          size="small" 
+          style={{width:450, marginBlock:10}}/>
+        <List style={{border:"1px solid grey", marginBottom:10,position: 'relative',overflow: 'auto',height: 300,}}>
+          {dataKendaraan.map((item, key) => (
+              <ListItem
+              button
+              selected={selectedIndex === key}
+              onClick={(event) => handleListItemClick(event, key)}
+            >
+              <ListItemText primary={item.value}/>
+            </ListItem>
+            ))}
+          
+          
+        </List>
+        <Button onClick={exitModal} variant="contained" style={{margin:"auto"}} color="primary">Pilih Kendaraan</Button>
+      </div>
+    </Fade>
+  </Modal>    
+  )
+}
+
 function InputNopolForm(){
 
   const [open, setOpen] = useState(false);
@@ -139,15 +273,20 @@ function InputNopolForm(){
 function InputKendaraanForm(){
 
   const [open, setOpen] = useState(false);
+  const [buka, setBuka] = useState(false);
   const [inputData, setInputData] = useState({
-    name:'',
-    email:'',
-    phone_no:'',
-    address:'',
-    role_id:''
+    plate_number:'',
+    vehicle_number:'',
+    chasis_number:'',
   })
   const [posisi, setPosisi] = useState([])
+  const [posisiKendaraan, setPosisiKendaraan] = useState([])
   const history = useHistory()
+  const [row, setRow] = useState([])
+  const [rowKendaraan, setRowKendaraan] = useState([])
+  const [selectedRow, setSelectedRow] = useState([])
+  const [selectedKendaraan, setSelectedKendaraan] = useState([])
+  const [rowPelanggan, setRowPelanggan] = useState([])
   const data = [
     {
       key:"1",
@@ -170,12 +309,54 @@ function InputKendaraanForm(){
   const handleOpen = () => {
     setOpen(true);
   };
-
+  
   const handleClose = () => {
     setOpen(false);
   };
 
+  const handleBuka = () => {
+    setBuka(true);
+  };
+
+  const handleTutup = () => {
+    setBuka(false);
+  };
+
   const classes = useStyles()
+
+
+  useEffect(()=>{
+    const data = []
+    const dataKendaraan = []
+
+    fetch("http://localhost:8000/customer/")
+    .then(res =>res.json())
+    .then(
+      (result)=>{
+        result.forEach(element => {
+          data.push({key:data.length, value:element.phone_no, name:element.name})
+        });
+        setRow(data)
+      }
+    )
+
+    fetch("http://localhost:8000/customer/vehicle/model")
+    .then(res => res.json())
+    .then(
+      (result) => {
+        result.forEach(element => {
+          dataKendaraan.push({
+            key:dataKendaraan.length, 
+            value:element.type, 
+            plate_number:element.plate_number,
+            engine_number:element.engine_number,
+            chasis_number:element.chasis_number})
+        })
+        setRowKendaraan(dataKendaraan)
+      }
+    )
+    
+  },[])
 
 
   
@@ -208,25 +389,30 @@ function InputKendaraanForm(){
     <Grid container direction="column" component={Paper} className={classes.boxInput}>
       <Typography color="primary" style={{marginBottom:20}}>Tambah Data Kendaraan</Typography>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, name: event.target.value}); event.preventDefault()}} value={inputData.name} label="Nama Karyawan" variant="outlined" size="small" style={{width:450}}/>
+        <TextField readOnly label="Nomor Handphone" variant="outlined" value={posisi.length === 0 ? "Pilih Nomor Handphone" : posisi[1]} size="small" style={{width:450}}/>
+        <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Cari Nomor Handphone</Button>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, email: event.target.value}); event.preventDefault()}} value={inputData.email} label="Email" variant="outlined" size="small" style={{width:450}}/>
+        <TextField readOnly label="Nama Pelanggan" variant="outlined" value={posisi.length === 0 ? "Pilih Nama Pelanggan" : selectedRow.name } size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, phone_no: event.target.value}); event.preventDefault()}} value={inputData.phone_no} label="Nomor HP" variant="outlined" size="small" style={{width:450}}/>
+        <TextField readOnly label="Model Kendaraan" variant="outlined" value={posisiKendaraan.length === 0 ? "Pilih Model Kendaraan" : posisiKendaraan[1]} size="small" style={{width:450}}/>
+        <Button onClick={handleBuka} variant="contained" color="primary" style={{marginLeft:10}}>Cari Model Kendaraan</Button>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, address: event.target.value}); event.preventDefault()}} value={inputData.address} label="Alamat Rumah" variant="outlined" size="small" style={{width:450}}/>
+        <TextField onChange={(event)=>{setInputData({...inputData, plate_number: event.target.value}); event.preventDefault()}} value={inputData.plate_number} label="Nomor Polisi" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField readOnly label="Posisi" variant="outlined" value={posisi.length === 0 ? "Pilih Melalui Tombol" : posisi[1]} size="small" style={{width:450}}/>
-        <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Pilih Posisi</Button>
+        <TextField onChange={(event)=>{setInputData({...inputData, vehicle_number: event.target.value}); event.preventDefault()}} value={inputData.vehicle_number} label="Nomor Mesin" variant="outlined" size="small" style={{width:450}}/>
+      </Box>
+      <Box display="flex" style={{marginBlock:10}}>
+        <TextField onChange={(event)=>{setInputData({...inputData, chasis_number: event.target.value}); event.preventDefault()}} value={inputData.chasis_number} label="Nomor Rangka" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
-      <ModalForm dataset={data} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item], setInputData({...inputData, role_id: key}))}}/>
+      <ModalPelanggan dataset={row} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item]); setSelectedRow(row[key]) }} />
+      <ModalKendaraan dataset={rowKendaraan} openState={buka} handleClose={()=>handleTutup()} changeInput={(key, item)=>{setPosisiKendaraan([key, item]); setSelectedKendaraan(rowKendaraan[key]) }} />
     </Grid>
   )
 }
@@ -235,13 +421,20 @@ function InputPelangganForm(){
   
   const [open, setOpen] = useState(false);
   const [inputData, setInputData] = useState({
+    cust_id: uniqid("CST-"),
+    vehicle_id: uniqid("VH-"),
     name:'',
     email:'',
     phone_no:'',
     address:'',
+    plate_number:'',
+    engine_number:'',
+    chasis_number:'',
     role_id:''
   })
   const [posisi, setPosisi] = useState([])
+  const [posisiKendaraan, setPosisiKendaraan] = useState([])
+  const [rowKendaraan, setRowKendaraan] = useState([])
   const history = useHistory()
   const data = [
     {
@@ -262,6 +455,25 @@ function InputPelangganForm(){
     }
   ]
 
+  useEffect(()=>{
+    const dataKendaraan = []
+    fetch("http://localhost:8000/customer/vehicle/model")
+    .then(res => res.json())
+    .then(
+      (result) => {
+        result.forEach(element => {
+          dataKendaraan.push({
+            key:dataKendaraan.length, 
+            value:element.type, 
+            plate_number:element.plate_number,
+            engine_number:element.engine_number,
+            chasis_number:element.chasis_number})
+        })
+        setRowKendaraan(dataKendaraan)
+      }
+    )
+  },[])
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -276,24 +488,66 @@ function InputPelangganForm(){
   
   async function onSubmit(event){
     event.preventDefault()
-    await fetch('http://localhost:8000/staff', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({data:inputData})
-    }).then(res =>{
+    // await fetch('http://localhost:8000/customer', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({data:inputData})
+    // }).then(res =>{
+    //   if(res.status === 201){
+    //     history.push({ 
+    //       pathname: '/staff',
+    //       state: "Success"
+    //      })
+    //   }else{
+    //     history.push({ 
+    //       pathname: '/staff',
+    //       state: "Failed"
+    //      })  
+    //   }
+    // })
+
+    axios.post('http://localhost:8000/customer', {
+      id: inputData.cust_id,
+      name: inputData.name,
+      email: inputData.email,
+      phone_no: inputData.phone_no,
+      address: inputData.address,
+      community_member: 0
+    }).then(res => {
       if(res.status === 201){
-        history.push({ 
-          pathname: '/staff',
+        history.push({
+          pathname: '/work-order',
           state: "Success"
-         })
+        })
       }else{
-        history.push({ 
-          pathname: '/staff',
+        history.push({
+          pathname: '/work-order',
           state: "Failed"
-         })  
+        })
+      }
+    })
+    axios.post('http://localhost:8000/customer/vehicle', {
+      id: inputData.vehicle_id,
+      customer_id: inputData.cust_id,
+      vehicle_model_id: inputData.role_id,
+      // vehicle_model_id:1,
+      plate_number: inputData.plate_number,
+      engine_number: inputData.engine_number,
+      chasis_number: inputData.chasis_number,
+    }).then(res => {
+      if(res.status === 201){
+        history.push({
+          pathname: '/work-order',
+          state: "Success"
+        })
+      }else{
+        history.push({
+          pathname: '/work-order',
+          state: "Failed"
+        })
       }
     })
     
@@ -303,7 +557,7 @@ function InputPelangganForm(){
     <Grid container direction="column" component={Paper} className={classes.boxInput}>
       <Typography color="primary" style={{marginBottom:20}}>Tambah Data Pelanggan</Typography>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, name: event.target.value}); event.preventDefault()}} value={inputData.name} label="Nama Karyawan" variant="outlined" size="small" style={{width:450}}/>
+        <TextField onChange={(event)=>{setInputData({...inputData, name: event.target.value}); event.preventDefault()}} value={inputData.name} label="Nama Pelanggan" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <TextField onChange={(event)=>{setInputData({...inputData, email: event.target.value}); event.preventDefault()}} value={inputData.email} label="Email" variant="outlined" size="small" style={{width:450}}/>
@@ -315,13 +569,22 @@ function InputPelangganForm(){
         <TextField onChange={(event)=>{setInputData({...inputData, address: event.target.value}); event.preventDefault()}} value={inputData.address} label="Alamat Rumah" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField readOnly label="Posisi" variant="outlined" value={posisi.length === 0 ? "Pilih Melalui Tombol" : posisi[1]} size="small" style={{width:450}}/>
-        <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Pilih Posisi</Button>
+        <TextField readOnly label="Model Kendaraan" variant="outlined" value={posisiKendaraan.length === 0 ? "Pilih Model Kendaraan" : posisiKendaraan[1]} size="small" style={{width:450}}/>
+        <Button onClick={handleOpen} variant="contained" color="primary" style={{marginLeft:10}}>Cari Model Kendaraan</Button>
+      </Box>
+      <Box display="flex" style={{marginBlock:10}}>
+        <TextField onChange={(event)=>{setInputData({...inputData, plate_number: event.target.value}); event.preventDefault()}} value={inputData.plate_number} label="Nomor Polisi" variant="outlined" size="small" style={{width:450}}/>
+      </Box>
+      <Box display="flex" style={{marginBlock:10}}>
+        <TextField onChange={(event)=>{setInputData({...inputData, engine_number: event.target.value}); event.preventDefault()}} value={inputData.engine_number} label="Nomor Mesin" variant="outlined" size="small" style={{width:450}}/>
+      </Box>
+      <Box display="flex" style={{marginBlock:10}}>
+        <TextField onChange={(event)=>{setInputData({...inputData, chasis_number: event.target.value}); event.preventDefault()}} value={inputData.chasis_number} label="Nomor Rangka" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
-      <ModalForm dataset={data} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item], setInputData({...inputData, role_id: key}))}}/>
+      <ModalKendaraan dataset={rowKendaraan} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisiKendaraan([key, item], setInputData({...inputData, role_id: key}))}}/>
     </Grid>
   )
 }
