@@ -276,8 +276,10 @@ function InputKendaraanForm(){
   const [buka, setBuka] = useState(false);
   const [inputData, setInputData] = useState({
     plate_number:'',
-    vehicle_number:'',
+    engine_number:'',
     chasis_number:'',
+    id_pelanggan:'',
+    id_kendaraan:''
   })
   const [posisi, setPosisi] = useState([])
   const [posisiKendaraan, setPosisiKendaraan] = useState([])
@@ -334,7 +336,7 @@ function InputKendaraanForm(){
     .then(
       (result)=>{
         result.forEach(element => {
-          data.push({key:data.length, value:element.phone_no, name:element.name})
+          data.push({key:element.id, value:element.phone_no, name:element.name})
         });
         setRow(data)
       }
@@ -346,7 +348,7 @@ function InputKendaraanForm(){
       (result) => {
         result.forEach(element => {
           dataKendaraan.push({
-            key:dataKendaraan.length, 
+            key:element.id, 
             value:element.type, 
             plate_number:element.plate_number,
             engine_number:element.engine_number,
@@ -362,24 +364,25 @@ function InputKendaraanForm(){
   
   async function onSubmit(event){
     event.preventDefault()
-    await fetch('http://localhost:8000/staff', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({data:inputData})
-    }).then(res =>{
+    axios.post('http://localhost:8000/customer/vehicle', {
+      id: uniqid("VH-"),
+      customer_id: inputData.id_pelanggan,
+      vehicle_model_id: inputData.id_kendaraan,
+      // vehicle_model_id:1,
+      plate_number: inputData.plate_number,
+      engine_number: inputData.engine_number,
+      chasis_number: inputData.chasis_number,
+    }).then(res => {
       if(res.status === 201){
-        history.push({ 
-          pathname: '/staff',
+        history.push({
+          pathname: '/work-order',
           state: "Success"
-         })
+        })
       }else{
-        history.push({ 
-          pathname: '/staff',
+        history.push({
+          pathname: '/work-order',
           state: "Failed"
-         })  
+        })
       }
     })
     
@@ -403,7 +406,7 @@ function InputKendaraanForm(){
         <TextField onChange={(event)=>{setInputData({...inputData, plate_number: event.target.value}); event.preventDefault()}} value={inputData.plate_number} label="Nomor Polisi" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
-        <TextField onChange={(event)=>{setInputData({...inputData, vehicle_number: event.target.value}); event.preventDefault()}} value={inputData.vehicle_number} label="Nomor Mesin" variant="outlined" size="small" style={{width:450}}/>
+        <TextField onChange={(event)=>{setInputData({...inputData, engine_number: event.target.value}); event.preventDefault()}} value={inputData.engine_number} label="Nomor Mesin" variant="outlined" size="small" style={{width:450}}/>
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <TextField onChange={(event)=>{setInputData({...inputData, chasis_number: event.target.value}); event.preventDefault()}} value={inputData.chasis_number} label="Nomor Rangka" variant="outlined" size="small" style={{width:450}}/>
@@ -411,8 +414,8 @@ function InputKendaraanForm(){
       <Box display="flex" style={{marginBlock:10}}>
         <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
-      <ModalPelanggan dataset={row} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item]); setSelectedRow(row[key]) }} />
-      <ModalKendaraan dataset={rowKendaraan} openState={buka} handleClose={()=>handleTutup()} changeInput={(key, item)=>{setPosisiKendaraan([key, item]); setSelectedKendaraan(rowKendaraan[key]) }} />
+      <ModalPelanggan dataset={row} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item], setSelectedRow(row[key]),setInputData({...inputData, id_pelanggan: key})) }} />
+      <ModalKendaraan dataset={rowKendaraan} openState={buka} handleClose={()=>handleTutup()} changeInput={(key, item)=>{setPosisiKendaraan([key, item], setInputData({...inputData, id_kendaraan: key}))}}/>
     </Grid>
   )
 }
@@ -463,7 +466,7 @@ function InputPelangganForm(){
       (result) => {
         result.forEach(element => {
           dataKendaraan.push({
-            key:dataKendaraan.length, 
+            key:element.id, 
             value:element.type, 
             plate_number:element.plate_number,
             engine_number:element.engine_number,
@@ -488,27 +491,6 @@ function InputPelangganForm(){
   
   async function onSubmit(event){
     event.preventDefault()
-    // await fetch('http://localhost:8000/customer', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({data:inputData})
-    // }).then(res =>{
-    //   if(res.status === 201){
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Success"
-    //      })
-    //   }else{
-    //     history.push({ 
-    //       pathname: '/staff',
-    //       state: "Failed"
-    //      })  
-    //   }
-    // })
-
     axios.post('http://localhost:8000/customer', {
       id: inputData.cust_id,
       name: inputData.name,
@@ -540,7 +522,7 @@ function InputPelangganForm(){
     }).then(res => {
       if(res.status === 201){
         history.push({
-          pathname: '/work-order',
+          pathname: `/pkb/create/${inputData.vehicle_id}`,
           state: "Success"
         })
       }else{
@@ -552,7 +534,7 @@ function InputPelangganForm(){
     })
     
   }
-
+console.log(inputData.role_id)
   return(
     <Grid container direction="column" component={Paper} className={classes.boxInput}>
       <Typography color="primary" style={{marginBottom:20}}>Tambah Data Pelanggan</Typography>
