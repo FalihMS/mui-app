@@ -48,7 +48,7 @@ function PrinterPKB(props) {
     return(
       <Box>
         <Typography variant="h5" color="primary" style={{marginBottom:20}}>Printer PKB</Typography>
-        <Iframe src={`http://localhost:8000/printer?t=pkb&id=29`} height="1500" width="900"/>
+        <Iframe src={`http://localhost:8000/printer?t=pkb&id=${id}`} height="1500" width="900"/>
       </Box>
     )
   }

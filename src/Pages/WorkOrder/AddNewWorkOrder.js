@@ -236,7 +236,7 @@ function InputNopolForm(){
     .then(
       (result)=>{
         result.forEach(element => {
-          data.push({key:data.length, value:element.plate_number, vehicle_model:element.vehicle_model})
+          data.push({key:data.length, id:element.id, value:element.plate_number, vehicle_model:element.vehicle_model})
         });
         setRow(data)
       }
@@ -251,6 +251,14 @@ function InputNopolForm(){
     setOpen(false);
   };
 
+  async function onSubmit(event){
+    event.preventDefault()
+    history.push({
+      pathname: '/pkb/create/' + row[selectedRow.key].id,
+      state: "Success"
+    })
+  }
+
   const classes = useStyles()
 
 
@@ -263,6 +271,9 @@ function InputNopolForm(){
       </Box>
       <Box display="flex" style={{marginBlock:10}}>
         <TextField readOnly label="Model Kendaraan" variant="outlined" value={posisi.length === 0 ? "Pilih Nomor Polisi" : selectedRow.vehicle_model } size="small" style={{width:450}}/>
+      </Box>
+      <Box display="flex" style={{marginBlock:10}}>
+        <Button onClick={(event)=>onSubmit(event)} variant="contained" color="primary">Masukan Data</Button>
       </Box>
       <ModalForm dataset={row} openState={open} handleClose={()=>handleClose()} changeInput={(key, item)=>{setPosisi([key, item]); setSelectedRow(row[key]) }} />
     </Grid>
@@ -364,8 +375,9 @@ function InputKendaraanForm(){
   
   async function onSubmit(event){
     event.preventDefault()
+    let uniqid = uniqid("VH-")
     axios.post('http://localhost:8000/customer/vehicle', {
-      id: uniqid("VH-"),
+      id: uniqid,
       customer_id: inputData.id_pelanggan,
       vehicle_model_id: inputData.id_kendaraan,
       // vehicle_model_id:1,
@@ -375,7 +387,7 @@ function InputKendaraanForm(){
     }).then(res => {
       if(res.status === 201){
         history.push({
-          pathname: '/work-order',
+          pathname: '/pkb/create/' + uniqid,
           state: "Success"
         })
       }else{
@@ -500,15 +512,15 @@ function InputPelangganForm(){
       community_member: 0
     }).then(res => {
       if(res.status === 201){
-        history.push({
-          pathname: '/work-order',
-          state: "Success"
-        })
+        // history.push({
+        //   pathname: '/work-order',
+        //   state: "Success"
+        // })
       }else{
-        history.push({
-          pathname: '/work-order',
-          state: "Failed"
-        })
+        // history.push({
+        //   pathname: '/work-order',
+        //   state: "Failed"
+        // })
       }
     })
     axios.post('http://localhost:8000/customer/vehicle', {
