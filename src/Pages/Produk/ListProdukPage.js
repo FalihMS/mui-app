@@ -1,109 +1,222 @@
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
+/* eslint-disable react/prop-types */
+import { useTheme, makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { Box, Button, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TableCell,
+  TextField,
+  Toolbar,
+  Typography
+} from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import { Search } from '@material-ui/icons';
+import useTable from '../../Components/useTable';
 
-const StyledTableCell = withStyles((theme) => ({
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-const useStyles = makeStyles((theme)=>({
-  buttonList:{
-    marginBlock:theme.spacing(3),
-    display: "flex",
+const useStyles = makeStyles((theme) => ({
+  buttonList: {
+    marginBlock: theme.spacing(3),
+    display: 'flex'
   },
   table: {
-    minWidth: 700,
+    minWidth: 700
   },
-  button:{
+  button: {
     marginRight: 10
+  },
+  searchInput: {
+    width: '75%'
   }
 }));
 
-function ButtonList(){
-  const classes = useStyles()
+const headCells = [
+  { id: 'name', label: 'Nama' },
+  { id: 'unit_measurement', label: 'Satuan Unit' },
+  { id: 'category', label: 'Kategori' },
+  { id: 'aksi', label: 'Aksi', disableSorting: true }
+];
 
-  return(
+function ButtonList() {
+  const classes = useStyles();
+
+  return (
     <Box className={classes.buttonList} mx="auto">
-      <Button className={classes.button} component="a" href="/produk/create" variant="contained" color="primary">Tambah Produk</Button>
-      <Button className={classes.button} component="a" href="/produk/create" variant="contained" color="primary">Barang Masuk</Button>
-      <Button className={classes.button} component="a" href="/produk/create" variant="contained" color="primary">Barang Keluar</Button>
+      <Button
+        className={classes.button}
+        component="a"
+        href="/produk/create"
+        variant="contained"
+        color="primary">
+        Tambah Produk
+      </Button>
+      <Button
+        className={classes.button}
+        component="a"
+        href="/produk/create"
+        variant="contained"
+        color="primary">
+        Barang Masuk
+      </Button>
+      <Button
+        className={classes.button}
+        component="a"
+        href="/produk/create"
+        variant="contained"
+        color="primary">
+        Barang Keluar
+      </Button>
     </Box>
-  )
+  );
 }
 
-function CustomizedTables() {
-  const [rows, setRows] = useState([])
-  const classes = useStyles();
-  useEffect(()=>{
-    axios
-    .get("http://localhost:8000/product")
-    .then((response) => {
-        setRows(response.data);
-    })
-  },[])
+function TablePaginationActions(props) {
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onPageChange } = props;
+
+  const handleFirstPageButtonClick = (event) => {
+    onPageChange(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
   return (
-    <TableContainer component={Paper} className={classes.paper}>
-      <Table className={classes.table} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Nama Barang</StyledTableCell>
-            <StyledTableCell align="right">Satuan Ukuran</StyledTableCell>
-            <StyledTableCell align="right">Kategori Barang</StyledTableCell>
-            <StyledTableCell align="right">Lokasi Barang</StyledTableCell>
-            <StyledTableCell align="right">Aksi</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
-                {row.name}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.unit_measurement}</StyledTableCell>
-              <StyledTableCell align="right">{row.category}</StyledTableCell>
-              <StyledTableCell align="right">{row.storage_location}</StyledTableCell>
-              <StyledTableCell align="right">
-                <Button component="a" href={"/produk/"+ row.id} variant="outlined" color="primary">Lihat Detail</Button>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page">
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page">
+        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page">
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </Box>
+  );
+}
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired
+};
+
+function CustomizedTables() {
+  const classes = useStyles();
+  const [data, setData] = useState([]);
+  const [filterFn, setFilterFn] = useState({
+    fn: (items) => {
+      return items;
+    }
+  });
+
+  const { TblContainer, TblHead, TblPagination, tableProduk } = useTable(data, headCells, filterFn);
+
+  const handleSearch = (e) => {
+    let target = e.target;
+    setFilterFn({
+      fn: (items) => {
+        if (target.value == '') return items;
+        else return items.filter((x) => x.name.toLowerCase().includes(target.value));
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetch('http://localhost:8000/order')
+      .then((response) => response.json())
+      .then((data) => setData(data));
+  }, []);
+  return (
+    <>
+      <Paper className={classes.pageContent}>
+        <Toolbar>
+          <TextField
+            label="Cari Work Order"
+            className={classes.searchInput}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              )
+            }}
+            onChange={handleSearch}
+          />
+        </Toolbar>
+        <TblContainer>
+          <TblHead />
+          <TableBody>
+            {tableProduk().map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.unit_measurement}</TableCell>
+                <TableCell>{item.category}</TableCell>
+                <TableCell>
+                  <Button
+                    component="a"
+                    href={'/produk/' + item.id}
+                    style={{ marginRight: 10 }}
+                    variant="contained"
+                    color="primary">
+                    Detail
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </TblContainer>
+        <TblPagination />
+      </Paper>
+    </>
   );
 }
 
 function ListStaffPage(props) {
-    if(props.location.state !== undefined){
-      alert(props.location.state)
-    }
-
-    return(
-      <Box>
-        <Typography variant="h4" color="primary">Manajemen Produk</Typography>
-        <ButtonList/>
-        <CustomizedTables/>
-      </Box>
-    )
+  if (props.location.state !== undefined) {
+    alert(props.location.state);
   }
-  
-  export default ListStaffPage;
-  
+
+  return (
+    <Box>
+      <Typography variant="h4" color="primary">
+        Manajemen Produk
+      </Typography>
+      <ButtonList />
+      <CustomizedTables />
+    </Box>
+  );
+}
+
+export default ListStaffPage;
