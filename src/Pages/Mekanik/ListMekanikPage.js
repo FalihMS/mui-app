@@ -1,104 +1,205 @@
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
+/* eslint-disable react/prop-types */
+import { useTheme, makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { Box, Button, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TableCell,
+  TextField,
+  Toolbar,
+  Typography
+} from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import { Search } from '@material-ui/icons';
+import useTable from '../../Components/useTable';
 
-const StyledTableCell = withStyles((theme) => ({
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-const useStyles = makeStyles((theme)=>({
-  buttonList:{
-    marginBlock:theme.spacing(3)
+const useStyles = makeStyles((theme) => ({
+  buttonList: {
+    marginBlock: theme.spacing(3)
   },
   table: {
-    minWidth: 700,
+    minWidth: 500
   },
+  searchInput: {
+    width: '75%'
+  }
 }));
 
-function ButtonList(){
-  const classes = useStyles()
+const headCells = [
+  { id: 'name', label: 'Nama' },
+  { id: 'phone_no', label: 'Nomor Telepon' },
+  { id: 'email', label: 'Email' },
+  { id: 'address', label: 'Alamat' },
+  { id: 'join_address', label: 'Tanggal Masuk' },
+  { id: 'aksi', label: 'Aksi', disableSorting: true }
+];
 
-  return(
-    <Box className={classes.buttonList}>
-      <Button component="a" href="/mekanik/create" variant="contained" color="primary">Tambah Mekanik</Button>
-    </Box>
-  )
-}
-
-function CustomizedTables() {
-  const [rows, setRows] = useState([])
+function ButtonList() {
   const classes = useStyles();
-  useEffect(()=>{
-    axios
-    .get("http://localhost:8000/service/mechanic")
-    .then((response) => {
-        setRows(response.data);
-    })
-  },[])
+
   return (
-    <TableContainer component={Paper} className={classes.paper}>
-      <Table className={classes.table} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Nama Mekanik</StyledTableCell>
-            <StyledTableCell align="right">Nomor Telepon</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right">Alamat</StyledTableCell>
-            <StyledTableCell align="right">Join Date</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
-                {row.name}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.phone_no}</StyledTableCell>
-              <StyledTableCell align="right">{row.email}</StyledTableCell>
-              <StyledTableCell align="right">{row.address}</StyledTableCell>
-              <StyledTableCell align="right">{row.join_date}</StyledTableCell>
-              <StyledTableCell align="right">
-                <Button component="a" href={"/mekanik/"+ row.id} variant="outlined" color="primary">Lihat Detail</Button>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box className={classes.buttonList}>
+      <Button component="a" href="/mekanik/create" variant="contained" color="primary">
+        Tambah Karyawan
+      </Button>
+    </Box>
   );
 }
 
-function ListMekanikPage(props) {
-    if(props.location.state !== undefined){
-      alert(props.location.state)
-    }
+function TablePaginationActions(props) {
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onPageChange } = props;
 
-    return(
-      <Box>
-        <Typography variant="h4" color="primary">Manajemen Mekanik</Typography>
-        <ButtonList/>
-        <CustomizedTables/>
-      </Box>
-    )
+  const handleFirstPageButtonClick = (event) => {
+    onPageChange(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page">
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page">
+        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page">
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </Box>
+  );
+}
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired
+};
+
+function CustomizedTables() {
+  const classes = useStyles();
+  const [data, setData] = useState([]);
+  const [filterFn, setFilterFn] = useState({
+    fn: (items) => {
+      return items;
+    }
+  });
+
+  const { TblContainer, TblHead, TblPagination, tableMekanik } = useTable(
+    data,
+    headCells,
+    filterFn
+  );
+
+  const handleSearch = (e) => {
+    let target = e.target;
+    setFilterFn({
+      fn: (items) => {
+        if (target.value == '') return items;
+        else return items.filter((x) => x.name.toLowerCase().includes(target.value));
+      }
+    });
+  };
+  useEffect(() => {
+    fetch('http://localhost:8000/service/mechanic')
+      .then((response) => response.json())
+      .then((data) => setData(data));
+  }, []);
+
+  return (
+    <>
+      <Paper className={classes.pageContent}>
+        <Toolbar>
+          <TextField
+            label="Cari Mekanik"
+            className={classes.searchInput}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              )
+            }}
+            onChange={handleSearch}
+          />
+        </Toolbar>
+        <TblContainer>
+          <TblHead />
+          <TableBody>
+            {tableMekanik().map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.phone_no}</TableCell>
+                <TableCell>{item.email}</TableCell>
+                <TableCell>{item.address}</TableCell>
+                <TableCell>{item.join_date.slice(0, 16)}</TableCell>
+                <TableCell>
+                  <Button
+                    component="a"
+                    href={'/print/pkb' + item.id}
+                    style={{ marginRight: 10 }}
+                    variant="contained"
+                    color="primary">
+                    Detail
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </TblContainer>
+        <TblPagination />
+      </Paper>
+    </>
+  );
+}
+
+function ListMekanik(props) {
+  if (props.location.state !== undefined) {
+    alert(props.location.state);
   }
-  
-  export default ListMekanikPage;
-  
+
+  return (
+    <Box>
+      <Typography variant="h4" color="primary">
+        Manajemen Mekanik
+      </Typography>
+      <ButtonList />
+      <CustomizedTables />
+    </Box>
+  );
+}
+
+export default ListMekanik;
