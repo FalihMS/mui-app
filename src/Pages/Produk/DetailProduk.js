@@ -58,6 +58,24 @@ function InputForm(props) {
       });
   }
 
+  async function onDelete(event) {
+    event.preventDefault();
+
+    axios.delete(`http://localhost:8000/produk/${inputData.id}`).then((res) => {
+      if (res.status === 200) {
+        history.push({
+          pathname: '/produk',
+          state: 'Berhasil Hapus Data'
+        });
+      } else {
+        history.push({
+          pathname: '/produk',
+          state: 'Gagal Hapus Data'
+        });
+      }
+    });
+  }
+
   return (
     <Grid container direction="column" component={Paper} className={classes.boxInput}>
       <Typography variant="h5" color="primary" style={{ marginBottom: 20 }}>
@@ -116,8 +134,15 @@ function InputForm(props) {
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
-        <Button onClick={(event) => onSubmit(event)} variant="contained" color="primary">
+        <Button
+          onClick={(event) => onSubmit(event)}
+          variant="contained"
+          color="primary"
+          style={{ marginRight: 10 }}>
           Masukan Data
+        </Button>
+        <Button onClick={(event) => onDelete(event)} variant="contained" color="secondary">
+          Hapus Data
         </Button>
       </Box>
     </Grid>
@@ -183,6 +208,14 @@ function DetailProduk() {
       <Typography variant="h5" color="primary" style={{ marginBottom: 20 }}>
         Detail Barang
       </Typography>
+      <Button
+        component="a"
+        href={'/produk/'}
+        style={{ marginRight: 10 }}
+        variant="outlined"
+        color="primary">
+        Kembali
+      </Button>
       <Button
         onClick={(event) => handleChangeUpdate(event)}
         variant="outlined"

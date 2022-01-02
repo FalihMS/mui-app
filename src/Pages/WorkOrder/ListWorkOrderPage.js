@@ -167,7 +167,7 @@ function CustomizedTables() {
                 <TableCell>
                   <Button
                     component="a"
-                    href={'/print/pkb' + item.id}
+                    href={'/printer/pkb' + item.id}
                     style={{ marginRight: 10 }}
                     variant="contained"
                     color="primary">

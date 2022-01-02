@@ -169,7 +169,7 @@ function CustomizedTables() {
                 <TableCell>
                   <Button
                     component="a"
-                    href={'/print/pkb' + item.id}
+                    href={'/mekanik/' + item.id}
                     style={{ marginRight: 10 }}
                     variant="contained"
                     color="primary">
