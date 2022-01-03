@@ -34,7 +34,8 @@ function InputForm(props) {
     email: props.mekanikData.email,
     phone_no: props.mekanikData.phone_no,
     address: props.mekanikData.address,
-    role_id: props.mekanikData.role_id
+    role_id: props.mekanikData.role_id,
+    join_date: props.mekanikData.join_date
   });
   const history = useHistory();
   const classes = useStyles();
@@ -61,7 +62,7 @@ function InputForm(props) {
           email: inputData.email,
           phone_no: inputData.phone_no,
           address: inputData.address,
-          join_date: Date.now()
+          join_date: inputData.join_date
         })
         .then((res) => {
           if (res.status === 201) {
@@ -192,6 +193,20 @@ function InputForm(props) {
               ? 'Alamat Tidak Boleh Lebih dari 60 Karakter'
               : ''
           }
+        />
+      </Box>
+      <Box display="flex" style={{ marginBlock: 10 }}>
+        <TextField
+          disabled
+          onChange={(event) => {
+            setInputData({ ...inputData, join_date: event.target.value });
+            event.preventDefault();
+          }}
+          value={inputData.join_date.slice(0, 16)}
+          label="Tanggal Masuk"
+          variant="outlined"
+          size="small"
+          style={{ width: 450 }}
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
