@@ -41,6 +41,10 @@ const headCells = [
   { id: 'aksi', label: 'Aksi', disableSorting: true }
 ];
 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function ButtonList() {
   const classes = useStyles();
 
@@ -161,7 +165,7 @@ function CustomizedTables() {
               <TableRow key={item.id}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.description}</TableCell>
-                <TableCell>{item.flat_rate}</TableCell>
+                <TableCell>{numberWithCommas(item.flat_rate)}</TableCell>
                 <TableCell>
                   <Button
                     component="a"

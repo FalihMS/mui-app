@@ -5,6 +5,8 @@ import { useHistory } from 'react-router';
 import axios from 'axios';
 import uniqid from 'uniqid';
 
+const regx = /[0-9]+/i;
+
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: 'flex',
@@ -35,27 +37,40 @@ function InputForm() {
   async function onSubmit(event) {
     event.preventDefault();
 
-    axios
-      .post('http://localhost:8000/product', {
-        id: uniqid('PR-'),
-        name: inputData.name,
-        unit_measurement: inputData.unit_measurement,
-        category: inputData.category,
-        recommendation_price: inputData.recommendation_price
-      })
-      .then((res) => {
-        if (res.status === 201) {
-          history.push({
-            pathname: '/product',
-            state: 'Success'
-          });
-        } else {
-          history.push({
-            pathname: '/product',
-            state: 'Failed'
-          });
-        }
-      });
+    if (inputData.name === '' || inputData.name.length > 100) {
+      console.log('Error Name');
+    } else if (inputData.unit_measurement === '' || inputData.unit_measurement.length > 100) {
+      console.log('Error unit_measurement');
+    } else if (inputData.category === '' || inputData.category.length > 100) {
+      console.log('Error category');
+    } else if (
+      inputData.recommendation_price === '' ||
+      !regx.test(inputData.recommendation_price)
+    ) {
+      console.log('Error recommendation_price');
+    } else {
+      axios
+        .post('http://localhost:8000/product', {
+          id: uniqid('PR-'),
+          name: inputData.name,
+          unit_measurement: inputData.unit_measurement,
+          category: inputData.category,
+          recommendation_price: inputData.recommendation_price
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            history.push({
+              pathname: '/produk',
+              state: 'Success'
+            });
+          } else {
+            history.push({
+              pathname: '/produk',
+              state: 'Failed'
+            });
+          }
+        });
+    }
   }
 
   return (
@@ -74,6 +89,14 @@ function InputForm() {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.name === '' || inputData.name.length > 100}
+          helperText={
+            inputData.name === ''
+              ? 'Masukkan Nama Barang!'
+              : inputData.name.length > 100
+              ? 'Nama Barang Tidak Boleh Lebih dari 100 Karakter!'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -87,6 +110,14 @@ function InputForm() {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.unit_measurement === '' || inputData.unit_measurement.length > 100}
+          helperText={
+            inputData.unit_measurement === ''
+              ? 'Masukkan Satuan Ukuran!'
+              : inputData.unit_measurement.length > 100
+              ? 'Satuan Ukuran Tidak Boleh Lebih dari 100 Karakter'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -100,6 +131,14 @@ function InputForm() {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.category === '' || inputData.category.length > 100}
+          helperText={
+            inputData.category === ''
+              ? 'Masukkan Kategori Barang!'
+              : inputData.category.length > 100
+              ? 'Kategori Barang Tidak Boleh Lebih dari 100 Karakter!'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -113,6 +152,16 @@ function InputForm() {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={
+            inputData.recommendation_price === '' || !regx.test(inputData.recommendation_price)
+          }
+          helperText={
+            inputData.recommendation_price === ''
+              ? 'Masukkan Rekomendasi Harga Barang!'
+              : !regx.test(inputData.recommendation_price)
+              ? 'Hanya Boleh Angka!'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>

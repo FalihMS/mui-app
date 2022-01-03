@@ -54,6 +54,10 @@ function ButtonList() {
   );
 }
 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -163,7 +167,7 @@ function CustomizedTables() {
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.plate_number}</TableCell>
                 <TableCell>{item.type}</TableCell>
-                <TableCell>{item.odometer}</TableCell>
+                <TableCell>{numberWithCommas(item.odometer)}</TableCell>
                 <TableCell>
                   <Button
                     component="a"

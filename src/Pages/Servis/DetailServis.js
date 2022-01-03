@@ -7,6 +7,8 @@ import axios from 'axios';
 // import FormControl from '@mui/material/FormControl';
 // import Autocomplete from '@mui/material/Autocomplete';
 
+const regx = /[0-9]+/i;
+
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: 'flex',
@@ -36,26 +38,33 @@ function InputForm(props) {
 
   async function onSubmit(event) {
     event.preventDefault();
-
-    axios
-      .put(`http://localhost:8000/service/${inputData.id}`, {
-        name: inputData.name,
-        description: inputData.description,
-        flat_rate: inputData.flat_rate
-      })
-      .then((res) => {
-        if (res.status === 201) {
-          history.push({
-            pathname: '/service',
-            state: 'Success'
-          });
-        } else {
-          history.push({
-            pathname: '/service',
-            state: 'Failed'
-          });
-        }
-      });
+    if (inputData.name === '' || inputData.name.length > 60) {
+      console.log('Error Name');
+    } else if (inputData.description === '' || inputData.description.length > 60) {
+      console.log('Error description');
+    } else if (inputData.flat_rate === '' || !regx.test(inputData.flat_rate)) {
+      console.log('Error flat_rate');
+    } else {
+      axios
+        .put(`http://localhost:8000/service/${inputData.id}`, {
+          name: inputData.name,
+          description: inputData.description,
+          flat_rate: inputData.flat_rate
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            history.push({
+              pathname: '/service',
+              state: 'Success'
+            });
+          } else {
+            history.push({
+              pathname: '/service',
+              state: 'Failed'
+            });
+          }
+        });
+    }
   }
 
   async function onDelete(event) {
@@ -92,6 +101,14 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.name === '' || inputData.name.length > 60}
+          helperText={
+            inputData.name === ''
+              ? 'Masukkan Nama Service!'
+              : inputData.name.length > 60
+              ? 'Nama Service Tidak Boleh Lebih dari 60 Karakter!'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -105,6 +122,14 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.description === '' || inputData.description.length > 60}
+          helperText={
+            inputData.description === ''
+              ? 'Masukkan Deskripsi Service'
+              : inputData.description.length > 60
+              ? 'Deskripsi Service Tidak Boleh Lebih dari 60 Karakter!'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -118,6 +143,14 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.flat_rate === '' || !regx.test(inputData.flat_rate)}
+          helperText={
+            inputData.flat_rate === ''
+              ? 'Masukkan Harga!'
+              : !regx.test(inputData.flat_rate)
+              ? 'Harga Harus Angka!'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>

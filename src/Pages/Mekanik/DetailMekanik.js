@@ -1,9 +1,14 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable react/prop-types */
 import { Typography, Box, Paper, Grid, Button, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import axios from 'axios';
+
+const regx = /[0-9]+/i;
+const re =
+  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -37,27 +42,41 @@ function InputForm(props) {
   async function onSubmit(event) {
     event.preventDefault();
 
-    axios
-      .put(`http://localhost:8000/service/mechanic/${inputData.id}`, {
-        name: inputData.name,
-        email: inputData.email,
-        phone_no: inputData.phone_no,
-        address: inputData.address,
-        join_date: Date.now()
-      })
-      .then((res) => {
-        if (res.status === 201) {
-          history.push({
-            pathname: '/mekanik',
-            state: 'Success'
-          });
-        } else {
-          history.push({
-            pathname: '/mekanik',
-            state: 'Failed'
-          });
-        }
-      });
+    if (inputData.name === '' || inputData.name.length > 60) {
+      console.log('Error Name');
+    } else if (
+      inputData.phone_no === '' ||
+      !regx.test(inputData.phone_no) ||
+      inputData.phone_no.length > 12
+    ) {
+      console.log('Error Phone');
+    } else if (inputData.email === '' || !re.test(inputData.email) || inputData.email.length > 60) {
+      console.log('Error Email');
+    } else if (inputData.address === '' || inputData.address.length > 60) {
+      console.log('Error Address');
+    } else {
+      axios
+        .put(`http://localhost:8000/service/mechanic/${inputData.id}`, {
+          name: inputData.name,
+          email: inputData.email,
+          phone_no: inputData.phone_no,
+          address: inputData.address,
+          join_date: Date.now()
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            history.push({
+              pathname: '/mekanik',
+              state: 'Success'
+            });
+          } else {
+            history.push({
+              pathname: '/mekanik',
+              state: 'Failed'
+            });
+          }
+        });
+    }
   }
 
   async function onDelete(event) {
@@ -94,6 +113,14 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.name === '' || inputData.name.length > 60}
+          helperText={
+            inputData.name === ''
+              ? 'Masukkan Nama Mekanik!'
+              : inputData.name.length > 60
+              ? 'Nama Tidak Boleh lebih dari 60 Karakter'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -107,6 +134,20 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={
+            inputData.phone_no === '' ||
+            !regx.test(inputData.phone_no) ||
+            inputData.phone_no.length > 12
+          }
+          helperText={
+            inputData.phone_no === ''
+              ? 'Masukkan Nomor Handphone!'
+              : !regx.test(inputData.phone_no)
+              ? 'Nomor Handphone Harus Angka'
+              : inputData.phone_no.length > 12
+              ? 'Nomor Handphone Tidak Boleh Lebih dari 12 Angka'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -120,6 +161,16 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.email === '' || !re.test(inputData.email) || inputData.email.length > 60}
+          helperText={
+            inputData.email === ''
+              ? 'Masukkan Alamat Email!'
+              : !re.test(inputData.email)
+              ? 'Email Tidak Valid'
+              : inputData.email.length > 60
+              ? 'Email Tidak Boleh Lebih dari 60 Karakter'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
@@ -133,6 +184,14 @@ function InputForm(props) {
           variant="outlined"
           size="small"
           style={{ width: 450 }}
+          error={inputData.address === '' || inputData.address.length > 60}
+          helperText={
+            inputData.address === ''
+              ? 'Masukkan Alamat!'
+              : inputData.address.length > 60
+              ? 'Alamat Tidak Boleh Lebih dari 60 Karakter'
+              : ''
+          }
         />
       </Box>
       <Box display="flex" style={{ marginBlock: 10 }}>
